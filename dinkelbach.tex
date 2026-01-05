@@ -1,0 +1,133 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb, amsthm}
+\usepackage[leqno]{amsmath}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{mathtools, soul, color}
+\usetikzlibrary{positioning, chains, fit, shapes, calc}
+
+\newcommand{\N}{\mathbb N}
+\newcommand{\R}{\mathbb R}
+\newcommand{\E}{\mathbb E}
+\newcommand{\F}{\mathbb F}
+\newcommand{\Z}{\mathbb Z}
+\renewcommand{\S}{\mathbb S}
+\newcommand{\mA}{\mathcal A}
+\newcommand{\mC}{\mathcal C}
+\newcommand{\mF}{\mathcal F}
+\newcommand{\mG}{\mathcal G}
+\newcommand{\mH}{\mathcal H}
+\newcommand{\mI}{\mathcal I}
+\newcommand{\mL}{\mathcal L}
+\newcommand{\mN}{\mathcal N}
+\newcommand{\mP}{\mathcal P}
+\newcommand{\mS}{\mathcal S}
+\newcommand{\mX}{\mathcal X}
+\newcommand{\tleq}{\trianglelefteq}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Diag}{\operatorname{Diag}}
+\newcommand{\Null}{\operatorname{Null}}
+\newcommand{\relint}{\operatorname{relint}}
+\newcommand{\adj}{\operatorname{adj}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\renewcommand{\vec}{\mathbf}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\newcommand{\solution}{\vspace{40pt} \emph{Solution.}}
+\usepackage [margin=1cm]{geometry}
+\makeatletter
+
+\def\mch#1#2{\ensuremath{\left(\kern-.3em\left(\genfrac{}{}{0pt}{}{#1}{#2}\right)\kern-.3em\right)}}
+
+\pagestyle{empty}
+\begin{document}
+
+\begin{center}
+    {\large \bf A note on Dinkelbach} \\
+    Frank Wang 
+\end{center}
+
+Let $\E$ be a finite dimensional Euclidean space; let $\Omega \subseteq \E$ be a convex set, and let $h : \E \to \R$ be sufficiently differentiable. Then, $h$ is called \emph{pseudoconvex} on $\Omega$ if
+\[x, y \in \Omega, h(y) < h(x) \implies \langle \nabla h(x), y - x \rangle < 0\]
+Let $n \ge 3$ and $C, G \in \Omega := \S_{++}^n$ and define
+\[f(X) := \Tr(CX), \quad g(X) := \det(X)^{1/n}, \qquad \forall X \in \S_{++}^n\]
+Define the fractional function $h(X) := \frac{f(X)}{g(X)}, \quad \forall X \in \S_{++}^n$.
+
+Since $f$ is convex and $g$ is concave, $h$ is pseudoconvex on $\S_{++}^n$.
+
+\subsection*{Motivation for the Dinkelbach Algorithm}
+
+Note that
+\[f(X) = \Tr(CX) = \Tr(X^{1/2}C^{1/2}C^{1/2}X^{1/2}) = \|C^{1/2}X^{1/2}\|_F^2 > 0\]
+since $X, C \succ 0$. Let $\bar X$ be the minimizer of $k_{\bar \lambda}(X)$ on $\{X \in \Omega : \Tr(X) = 1\}$ and $k_{\bar \lambda}(\bar X) = 0$. Then,
+\[f(\bar X) - \bar \lambda g(\bar X) = 0\iff \bar \lambda = h(\bar X)\]
+For any other $X \in \Omega$ with $\Tr(X) = 1$,
+\[0 = k_{\bar \lambda}(\bar X) \le k_{\bar \lambda}(X) = f(X) - \bar\lambda g(X)\]
+If $g(X) \le 0$, then since $\bar \lambda \ge 0$,
+\[0 < f(X) = \bar \lambda g(X) \le 0\]
+which is a contradiction. Otherwise, $g(X) > 0$, so then
+\[h(\bar X) = \bar \lambda \le \frac{f(X)}{g(X)} = h(X)\]
+hence $\bar X$ minimizes $h$ subject to $\Tr(X) = 1$, $X \in \Omega$. Thus, if there exists $\bar \lambda \ge 0$ such that
+\[\bar X \in \argmin \{k_{\bar \lambda}(X) : \Tr(X) = 1, X \in \Omega\}, \quad k_{\bar \lambda}(\bar X) = 0\]
+then $\bar X$ solves
+\[\tag{FP} \min h(X) \quad : \quad \Tr(X) = 1, X \in \S_{++}^n\]
+
+\subsection*{The Dinkelbach Algorithm.}
+
+\begin{enumerate}[(a)]
+        \item \textbf{Initialization:} Choose an initial value for the parameter $\lambda_0 \ge 0$
+        \item \textbf{Iterative Step:} At each iteration $k$, solve the parametric non-fractional subproblem:
+        \[\min \{f(X) - \lambda_k g(X) : \Tr(X) = 1, X \in \Omega\}\]
+        Let $X_k$ be the optimal solution and $k_{\lambda_k}(X_k) = f(X_k) - \lambda_kg(X_k)$ be the optimal value.
+        \item \textbf{Update step:}
+        \begin{enumerate}[i.]
+            \item If $k_{\lambda_k}(X_k) = 0$, then $X_k$ is an optimal solution to the original fraction problem.
+            \item If $k_{\lambda_k}(X_k) \neq 0$, update the parameter $\lambda_{k + 1} = \frac{f(X_k)}{g(X_k)}$
+        \end{enumerate}
+        \item \textbf{Repeat} the iterative process.
+    \end{enumerate}
+
+The Lagrangian is
+\[L(X, \mu) = \Tr(CX) - \lambda_k \det(X)^{1/n} + \mu (\Tr(X) - 1)\]
+From stationarity of KKT,
+\[0 = \nabla_X L(X, \mu) = C - \frac{\lambda_k}n \det(X)^{1/n - 1} \det(X) X^{-1} + \mu I\]
+Let $M_X = \frac{\lambda_k}n \det(X)^{1/n}$. Then,
+\[X = M_X(C + \mu I)^{-1} \tag{$\clubsuit$}\]
+where we have an implicit constraint that $C + \mu I \succ 0$, since $M_X > 0$. Now, where $c_i$ are the eigenvalues of $C$,
+\[\det(X) = M_X^n \det((C + \mu I)^{-1}) = M_X^n \prod_{i = 1}^n \frac 1 {c_i + \mu}\]
+hence
+\[M_X = \frac {\lambda_k}n \left[M_X^n \prod_{i = 1}^n \frac 1 {c_i + \mu}\right]^{1/n} = \frac{\lambda_k M_X}n \left[\prod_{i = 1}^n \frac 1 {c_i + \mu}\right]^{1/n} \implies \left(\frac {\lambda_k}{n}\right)^n = \prod_{i = 1}^n (c_i + \mu) \tag{$\spadesuit$}\]
+since $M_X = 0 \implies \lambda_k = 0$ which implies this $X$ is optimal already, so we can assume $M_X \neq 0$. Now, use the constraint $\Tr(X) = 1$:
+\[1 = \Tr(M_X(C + \mu I)^{-1}) = M_X \sum_{i = 1}^n \frac1 {c_i + \mu} \implies M_X = \left(\sum_{i = 1}^n\frac 1 {c_i + \mu}\right)^{-1} \tag{$\diamondsuit$}\]
+Then, the process is:
+\begin{enumerate}
+    \item Solve for $\mu$ in $(\spadesuit)$ by using Newton's method.
+    \item Plug it into $(\diamondsuit)$ to solve for $M_X$
+    \item Use $M_X, \mu$ in $(\clubsuit)$ to solve for $X$.
+\end{enumerate}
+Let
+\[p(\mu) := \prod_{i = 1}^n(c_i + \mu)\]
+Then,
+\[\log(p(\mu)) = \sum_{i = 1}^n \log(c_i + \mu)\]
+hence
+\[\sum_{i = 1}^n \frac 1 {c_i + \mu} = \frac d {d\mu} \log (p(\mu)) = \frac{p'(\mu)}{p(\mu)}\]
+hence
+\[p'(\mu) = p(\mu)\sum_{i = 1}^n \frac 1 {c_i + \mu}\]
+This will be used for Newton's method.
+
+\subsection*{Notes}
+
+\begin{itemize}
+    \item The problem of solving $(\spadesuit)$ is ill-conditioned. In general, $\lambda_k \to 0$, which means $(\lambda_k/n)^n \to 0$, which means the value of $\mu$ will be very close to $-\lambda_{\min}(C)$, meaning $C + \mu I$ is very close to singular.
+    \item I tried this algorithm with $g(X) := \log \det(X)$, but the Dinkelbach algorithm requires the denominator $g(X)$ to be positive. Since the answer often resides near the boundary of the simplex $\Tr(X) = 1$, $\log \det(X)$ is often negative near the optimal value.
+\end{itemize}
+
+\end{document}
