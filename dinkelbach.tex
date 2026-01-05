@@ -67,7 +67,7 @@ Since $f$ is convex and $g$ is concave, $h$ is pseudoconvex on $\S_{++}^n$.
 
 Note that
 \[f(X) = \Tr(CX) = \Tr(X^{1/2}C^{1/2}C^{1/2}X^{1/2}) = \|C^{1/2}X^{1/2}\|_F^2 > 0\]
-since $X, C \succ 0$. Let $\bar X$ be the minimizer of $k_{\bar \lambda}(X)$ on $\{X \in \Omega : \Tr(X) = 1\}$ and $k_{\bar \lambda}(\bar X) = 0$. Then,
+since $X, C \succ 0$. Let $\bar X$ be the minimizer of $k_{\bar \lambda}(X) := f(X) - \bar \lambda g(X)$ on $\{X \in \Omega : \Tr(X) = 1\}$ and $k_{\bar \lambda}(\bar X) = 0$. Then,
 \[f(\bar X) - \bar \lambda g(\bar X) = 0\iff \bar \lambda = h(\bar X)\]
 For any other $X \in \Omega$ with $\Tr(X) = 1$,
 \[0 = k_{\bar \lambda}(\bar X) \le k_{\bar \lambda}(X) = f(X) - \bar\lambda g(X)\]
